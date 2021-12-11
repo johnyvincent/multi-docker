@@ -5,7 +5,7 @@ required: sudo
 services:
   - docker
 
-install_before:
+before_install:
   - docker build -t johnyv/react-test -f ./client/Dockerfile.dev ./client
 
 script:
