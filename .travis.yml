@@ -1,0 +1,23 @@
+language: generic
+
+required: sudo
+
+services:
+  - docker
+
+install_before:
+  - docker build -t johnyv:react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true johnyv:react-test npm run test 
+
+after_success:
+  - docker build -t johnyv:multi-client ./client
+  - docker build -t johnyv:multi-server ./server
+  - docker build -t johnyv:multi-worker ./worker
+  - docker build -t johnyv:multi-nginx ./nginx
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push johnyv:multi-client
+  - docker push johnyv:multi-server
+  - docker push johnyv:multi-worker
+  - docker push johnyv:multi-nginx
